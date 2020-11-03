@@ -3,20 +3,28 @@ const express = require('express');
 
 
 const app = express(); 
-const publicDirectoryPath = path.join(__dirname, '../public/');
+const publicDirectoryPath = path.join(__dirname, '../public');
+const robotURL = path.join(__dirname, '../public/img/robot.png');
+console.log(robotURL);
 
+app.set('view engine', 'hbs');
 app.use(express.static(publicDirectoryPath));
 
-app.get('/help', (req, res) => {
-  res.send('<h1>Help</h1>');
+app.get('', (req, res) => {
+  res.render('index');
 });
 
 app.get('/about', (req, res) => {
-  res.send('<h1>About</h1>');
+  res.render('about', {
+    title: 'This is the About page...',
+    robotURL: robotURL
+  });
 });
 
-app.get('/weather', (req, res) => {
-  res.send('<h1>Weather</h1>');
+app.get('/help', (req, res) => {
+  res.render('help', {
+    title: "HELP PAGE"
+  });
 });
 
 // app.com

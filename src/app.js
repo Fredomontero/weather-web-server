@@ -1,29 +1,38 @@
 const path = require('path');
 const express = require('express');
-
+const hbs = require('hbs');
 
 const app = express(); 
-const publicDirectoryPath = path.join(__dirname, '../public');
-const robotURL = path.join(__dirname, '../public/img/robot.png');
-console.log(robotURL);
 
+//Define paths for express config
+const publicDirectoryPath = path.join(__dirname, '../public');
+const viewsPath = path.join(__dirname, '../templates/views');
+const partialsPath = path.join(__dirname, '../templates/partials');
+
+
+//Setup handlebars engine and views location
 app.set('view engine', 'hbs');
+app.set('views', viewsPath);
+hbs.registerPartials(partialsPath);
+
+//Set up static directory to serve
 app.use(express.static(publicDirectoryPath));
 
 app.get('', (req, res) => {
-  res.render('index');
+  res.render('index', {
+    title: "Home Page"
+  });
 });
 
 app.get('/about', (req, res) => {
   res.render('about', {
-    title: 'This is the About page...',
-    robotURL: robotURL
+    title: 'About page',
   });
 });
 
 app.get('/help', (req, res) => {
   res.render('help', {
-    title: "HELP PAGE"
+    title: "Help page"
   });
 });
 

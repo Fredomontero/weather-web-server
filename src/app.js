@@ -1,6 +1,8 @@
 const path = require('path');
 const express = require('express');
 const hbs = require('hbs');
+const geocode = require('./utils/geocode');
+const forecast = require('./utils/forecast');
 
 const app = express(); 
 
@@ -39,6 +41,32 @@ app.get('/help', (req, res) => {
   });
 });
 
+app.get('/weather', (req, res) => {
+  if(!req.query.address){
+    return res.send({
+      error: 'You must provide an Address'
+    });
+  }
+  geocode(req.query.address, (error, { latitude, longitude, location } = {}) => {
+    if(error){
+      return res.send({
+        error: error
+      })
+    }
+    forecast(latitude , longitude, (error, { temperature, precipitation }) => {
+      if(error){
+        return res.send({
+          error: error
+        })
+      }
+      res.send({
+        forecast: `The temperature in is ${temperature} and is ${precipitation}% chance to rain`,
+        location: location
+      });
+    });
+  });
+});
+
 app.get('/help/*', (req, res) => {
   res.render('404', {
     message: "Help article not found.",
@@ -53,9 +81,6 @@ app.get('*', (req, res) => {
   });
 });
 
-// app.com
-// app.com/help
-// app.com/about
 
 app.listen(3000, () => {
   console.log("Server is up on port 3000");
